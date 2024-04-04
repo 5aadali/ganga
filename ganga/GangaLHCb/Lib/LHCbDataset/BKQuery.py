@@ -98,6 +98,8 @@ RecoToDST-07/90000000/DST" ,
     schema['check_archived'] = SimpleItem(defvalue=True, typelist=['bool'], doc='Check if the data set is archived')
     schema['ignore_archived'] = SimpleItem(defvalue=False, typelist=['bool'],
                                            doc='Return the data set, even if all the LFNs are archived')
+    schema['SMOG2'] = SimpleItem(defvalue=None, typelist=['str', 'list'],
+                                 doc='Specify the state of SMOG2')
     _schema = Schema(Version(1, 2), schema)
     _category = 'query'
     _name = "BKQuery"
