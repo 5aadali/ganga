@@ -10,19 +10,27 @@ Working on the Codebase
 ^^^^^^^^^^^^^^^
 To get started with contributing & making changes to the Ganga Codebase:
 
-1. Developers need to clone the repository with:
+1. Developers need to fork the Ganga repository. To do this, go to the `Ganga GitHub Repository <https://github.com/ganga-devs/ganga>`_, click on ``Fork`` button & Create a fork of the original repository.
+
+2. Developers need to clone the Forked repository with:
 
    .. code-block:: bash
 
-      git clone https://github.com/ganga-devs/ganga.git
+      git clone https://github.com/<USERNAME>/ganga.git
 
-2. They need to go into the root of the project with :
+   Where ``<USERNAME>`` is the developer's username.
+
+   .. note::
+
+       The users can also clone the forked repository via ``SSH`` by using ``git clone git@github.com:<USERNAME>/ganga.git`` once their Public & Private ``SSH Keys`` are generated & configured on GitHub.
+
+3. They need to go into the root of the project with :
 
    .. code-block:: bash
 
       cd ganga
 
-3. Then, run the following command to install ganga from the repo as an editable python package with relevant runtime, coverage & test packages :
+4. Then, run the following command to install ganga from the repo as an editable python package with relevant runtime, coverage & test packages :
 
    .. code-block:: bash
 
@@ -30,31 +38,39 @@ To get started with contributing & making changes to the Ganga Codebase:
 
    Now all changes made to the Ganga codebase will be reflected real-time
 
-4. To test their changes, developers can either initiate the ganga shell with the ganga command or invoke it via a python script.
+5. To test their changes, developers can either initiate the ganga shell with the ganga command or invoke it via a python script.
 
 Working on the Documentation
 ^^^^^^^^^^^^^^^
 To get started with contributing & making changes to the Ganga Codebase:
 
-1. Developers need to install **Sphinx** Documentation generator. Installation instructions can be found on `their website <https://www.sphinx-doc.org/en/master/usage/installation.html>`_.
+1. Developers need to fork the Ganga repository. To do this, go to the `Ganga GitHub Repository <https://github.com/ganga-devs/ganga>`_, click on ``Fork`` button & Create a fork of the original repository.
+
+2. Developers need to install **Sphinx** Documentation generator. Installation instructions can be found on `their website <https://www.sphinx-doc.org/en/master/usage/installation.html>`_.
 
    .. note::
        Since documentation is generated using a **Makefile** in ``the ganga/doc/`` folder, users may also need to install ``make`` on their systems, i.e., a build tool that can run makefiles
 
-2. Developers need to clone the repository with:
+3. Developers need to clone the repository with:
 
    .. code-block:: bash
 
-      git clone https://github.com/ganga-devs/ganga.git
+      git clone https://github.com/<USERNAME>/ganga.git
 
-3. They need to go into the docs folder i.e. ``ganga/doc/`` of the project with :
+   Where ``<USERNAME>`` is the developer's username.
+
+   .. note::
+
+       The users can also clone the forked repository via ``SSH`` by using ``git clone git@github.com:<USERNAME>/ganga.git`` once their Public & Private ``SSH Keys`` are generated & configured on GitHub.
+
+4. They need to go into the docs folder i.e. ``ganga/doc/`` of the project with :
 
    .. code-block:: bash
 
       cd ganga/doc
 
 
-4. Then, run the following command to generate documentation in the required format :
+5. Then, run the following command to generate documentation in the required format :
 
    .. code-block:: bash
 
@@ -121,9 +137,9 @@ To get started with contributing & making changes to the Ganga Codebase:
           * - ``apidoc``
             - to create RST files from source code documentation.
 
-5. This would generate a ``_build/`` folder which would contain the relevant output files.
+6. This would generate a ``_build/`` folder which would contain the relevant output files.
 
-6. Now, all changes made to the Ganga Documentation can be tested/previewed by re-running above command after making the change.
+7. Now, all changes made to the Ganga Documentation can be tested/previewed by re-running above command after making the change.
 
 GangaObject
 -----------
