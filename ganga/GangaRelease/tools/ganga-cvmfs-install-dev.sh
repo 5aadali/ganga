@@ -8,10 +8,12 @@ micromamba activate
 
 . bin/activate
 
+pip uninstall --yes ganga
+
 pip install --upgrade ganga[LHCb,Dirac]@git+https://github.com/ganga-devs/ganga.git@develop
 
 # We need to uninstall htcondor from the default installation to use the preinstalled versions on cvmfs
-pip uninstall htcondor
+pip uninstall --yes htcondor
 
 deactivate
 
