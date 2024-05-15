@@ -2,7 +2,7 @@
 
 cvmfs_server transaction ganga.cern.ch
 
-conda activate ganga
+micromamba activate
 
 cd /cvmfs/ganga.cern.ch/Ganga/install
 
@@ -14,9 +14,12 @@ pip install --upgrade pip setuptools
 
 pip install ganga[LHCb,Dirac]@git+https://github.com/ganga-devs/ganga.git@$1
 
+# We need to uninstall htcondor from the default installation to use the preinstalled versions on cvmfs
+pip uninstall htcondor
+
 deactivate
 
-conda deactivate
+micromamba deactivate
 
 rm -f /cvmfs/ganga.cern.ch/Ganga/install/LATEST
 

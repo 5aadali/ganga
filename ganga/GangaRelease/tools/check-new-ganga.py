@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import os
 import requests
-import commands
+import subprocess
 import shutil
 import glob
 msg = ""
@@ -17,7 +17,7 @@ try:
         # Now check if it's installed
         if rel_ver not in os.listdir('/cvmfs/ganga.cern.ch/Ganga/install/'):
             # we need to install it
-            msg = commands.getstatusoutput("/home/cvganga/ganga-cvmfs-install.sh %s" % rel_ver)[1]
+            msg = subprocess.getstatusoutput("/home/cvganga/ganga-cvmfs-install.sh %s" % rel_ver)[1]
             shutil.copy2(glob.glob('/cvmfs/ganga.cern.ch/Ganga/install/%s/lib/python3.*/site-packages/ganga/GangaRelease/'
                                    'tools/ganga-cvmfs-install.sh' % rel_ver)[0], os.path.expanduser('~'))
             shutil.copy2(glob.glob('/cvmfs/ganga.cern.ch/Ganga/install/%s/lib/python3.*/site-packages/ganga/GangaRelease/'

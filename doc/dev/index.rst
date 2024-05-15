@@ -3,6 +3,144 @@ Guide for developers
 
 This document is intended to detail some of the inner workings of Ganga to both document what we have done as well as make it easier for new developers to get on-board quicker.
 
+Get started with development:
+-----------
+
+Working on the Codebase
+^^^^^^^^^^^^^^^
+To get started with contributing & making changes to the Ganga Codebase:
+
+1. Developers need to fork the Ganga repository. To do this, go to the `Ganga GitHub Repository <https://github.com/ganga-devs/ganga>`_, click on ``Fork`` button & Create a fork of the original repository.
+
+2. Developers need to clone the Forked repository with:
+
+   .. code-block:: bash
+
+      git clone https://github.com/<USERNAME>/ganga.git
+
+   Where ``<USERNAME>`` is the developer's username.
+
+   .. note::
+
+       The users can also clone the forked repository via ``SSH`` by using ``git clone git@github.com:<USERNAME>/ganga.git`` once their Public & Private ``SSH Keys`` are generated & configured on GitHub.
+
+3. They need to go into the root of the project with :
+
+   .. code-block:: bash
+
+      cd ganga
+
+4. Then, run the following command to install ganga from the repo as an editable python package with relevant runtime, coverage & test packages :
+
+   .. code-block:: bash
+
+      pip install -e .[dev]
+
+   Now all changes made to the Ganga codebase will be reflected real-time
+
+5. To test their changes, developers can either initiate the ganga shell with the ganga command or invoke it via a python script.
+
+Working on the Documentation
+^^^^^^^^^^^^^^^
+To get started with contributing & making changes to the Ganga Codebase:
+
+1. Developers need to fork the Ganga repository. To do this, go to the `Ganga GitHub Repository <https://github.com/ganga-devs/ganga>`_, click on ``Fork`` button & Create a fork of the original repository.
+
+2. Developers need to install **Sphinx** Documentation generator. Installation instructions can be found on `their website <https://www.sphinx-doc.org/en/master/usage/installation.html>`_.
+
+   .. note::
+       Since documentation is generated using a **Makefile** in ``the ganga/doc/`` folder, users may also need to install ``make`` on their systems, i.e., a build tool that can run makefiles
+
+3. Developers need to clone the repository with:
+
+   .. code-block:: bash
+
+      git clone https://github.com/<USERNAME>/ganga.git
+
+   Where ``<USERNAME>`` is the developer's username.
+
+   .. note::
+
+       The users can also clone the forked repository via ``SSH`` by using ``git clone git@github.com:<USERNAME>/ganga.git`` once their Public & Private ``SSH Keys`` are generated & configured on GitHub.
+
+4. They need to go into the docs folder i.e. ``ganga/doc/`` of the project with :
+
+   .. code-block:: bash
+
+      cd ganga/doc
+
+
+5. Then, run the following command to generate documentation in the required format :
+
+   .. code-block:: bash
+
+      make <target>
+
+   .. note::
+
+       The supported list of targets are:
+
+       .. list-table::
+          :widths: 25 75
+          :header-rows: 1
+
+          * - Target
+            - Description
+          * - ``html``
+            - to make standalone HTML files.
+          * - ``dirhtml``
+            - to make HTML files named index.html in directories.
+          * - ``singlehtml``
+            - to make a single large HTML file.
+          * - ``pickle``
+            - to make pickle files.
+          * - ``json``
+            - to make JSON files.
+          * - ``htmlhelp``
+            - to make HTML files and a HTML help project.
+          * - ``qthelp``
+            - to make HTML files and a qthelp project.
+          * - ``applehelp``
+            - to make an Apple Help Book.
+          * - ``devhelp``
+            - to make HTML files and a Devhelp project.
+          * - ``epub``
+            - to make an epub.
+          * - ``latex``
+            - to make LaTeX files, you can set PAPER=a4 or PAPER=letter.
+          * - ``latexpdf``
+            - to make LaTeX files and run them through pdflatex.
+          * - ``latexpdfja``
+            - to make LaTeX files and run them through platex/dvipdfmx.
+          * - ``text``
+            - to make text files.
+          * - ``man``
+            - to make manual pages.
+          * - ``texinfo``
+            - to make Texinfo files.
+          * - ``info``
+            - to make Texinfo files and run them through makeinfo.
+          * - ``gettext``
+            - to make PO message catalogs.
+          * - ``changes``
+            - to make an overview of all changed/added/deprecated items.
+          * - ``xml``
+            - to make Docutils-native XML files.
+          * - ``pseudoxml``
+            - to make pseudoxml-XML files for display purposes.
+          * - ``linkcheck``
+            - to check all external links for integrity.
+          * - ``doctest``
+            - to run all doctests embedded in the documentation (if enabled).
+          * - ``coverage``
+            - to run coverage check of the documentation (if enabled).
+          * - ``apidoc``
+            - to create RST files from source code documentation.
+
+6. This would generate a ``_build/`` folder which would contain the relevant output files.
+
+7. Now, all changes made to the Ganga Documentation can be tested/previewed by re-running above command after making the change.
+
 GangaObject
 -----------
 
