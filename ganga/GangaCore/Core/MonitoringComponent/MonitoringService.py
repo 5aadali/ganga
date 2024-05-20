@@ -226,3 +226,28 @@ class AsyncMonitoringService(GangaThread):
             log.error(err)
         self._cleanup_scheduled_tasks()
         self.loop.call_soon_threadsafe(self.loop.stop)
+
+    def runMonitoring(self, jobs=None):
+        """
+        Enable/Run the monitoring loop and wait for the monitoring steps completion.
+        Parameters:
+          steps:   number of monitoring steps to run
+          timeout: how long to wait for monitor steps termination (seconds)
+          jobs: a registry slice to be monitored (None -> all jobs), it may be passed by the user so ._impl is stripped if needed
+        Return:
+          False, if the loop cannot be started or the timeout occured while waiting for monitoring termination
+          True, if the monitoring steps were successfully executed  
+        Note:         
+          This method is meant to be used in Ganga scripts to request monitoring on demand. 
+        """
+
+        log.debug("runMonitoring")
+        if not self.alive:
+            log.error("Cannot run the monitoring loop. It has already been stopped")
+            return False
+
+        self.enabled = True
+        self.thread_executor = ThreadPoolExecutor(max_workers=THREAD_POOL_SIZE)
+        self._cleanup_dirty_jobs()
+        self.loop.call_soon_threadsafe(functools.partial(self._check_active_backends, jobs))
+        return True
