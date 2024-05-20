@@ -98,7 +98,7 @@ RecoToDST-07/90000000/DST" ,
     schema['check_archived'] = SimpleItem(defvalue=True, typelist=['bool'], doc='Check if the data set is archived')
     schema['ignore_archived'] = SimpleItem(defvalue=False, typelist=['bool'],
                                            doc='Return the data set, even if all the LFNs are archived')
-    schema['SMOG2'] = SimpleItem(defvalue=None, typelist=['str', 'list'],
+    schema['SMOG2'] = SimpleItem(defvalue='', typelist=['str', 'list'],
                                  doc='Specify the state of SMOG2')
     _schema = Schema(Version(1, 2), schema)
     _category = 'query'
@@ -126,13 +126,13 @@ RecoToDST-07/90000000/DST" ,
             if self.selection:
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
-        cmd = "getDataset('%s','%s','%s','%s','%s','%s')" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection)
+        cmd = "getDataset('%s','%s','%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
+                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
-            cmd = "getDataset('%s',%s,'%s','%s','%s','%s')" % (self.path, self.dqflag,
-                                                               self.type, self.startDate, self.endDate, self.selection)
+            cmd = "getDataset('%s',%s,'%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
+                                                               self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
 
         try:
             value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
