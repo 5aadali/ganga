@@ -233,7 +233,7 @@ class AsyncMonitoringService(GangaThread):
         Parameters:
           steps:   number of monitoring steps to run
           timeout: how long to wait for monitor steps termination (seconds)
-          jobs: a registry slice to be monitored (None -> all jobs), it may be passed by the user so ._impl is stripped if needed
+          jobs: a registry slice to be monitored (None -> all jobs)
         Return:
           False, if the loop cannot be started or the timeout occured while waiting for monitoring termination
           True, if the monitoring steps were successfully executed  
