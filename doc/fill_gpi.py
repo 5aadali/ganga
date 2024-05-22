@@ -66,7 +66,7 @@ def signature(func, name=None):
     Returns: a string representing its signature as would be written in code
 
     """
-    args, varargs, varkw, defaults = inspect.getargspec(func)
+    args, varargs, varkw, defaults, *_ = inspect.getfullargspec(func)
     defaults = defaults or []  # If there are no defaults, set it to an empty list
     defaults = [repr(d) for d in defaults]  # Type to get a useful string representing the default
 
