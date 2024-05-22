@@ -46,7 +46,7 @@ def indent(s, depth=''):
     """
     Adds `indent` to the beginning of every line
     """
-    return '\n'.join(depth + l for l in s.splitlines())
+    return '\n'.join(depth + _l for _l in s.splitlines())
 
 
 def reindent(docstring, depth=''):
