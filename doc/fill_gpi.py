@@ -96,12 +96,9 @@ def signature(func, name=None):
 
 # First we get all objects that are in Ganga.GPI and filter out any non-GangaObjects
 gpi_classes = [
-    stripProxy(o) for name,
-    o in GangaCore.GPI.__dict__.items() if isinstance(
-        o,
-        type) and issubclass(
-            o,
-        GPIProxyObject)]
+    stripProxy(o) for name, o in GangaCore.GPI.__dict__.items()
+    if isinstance(o, type) and issubclass(o, GPIProxyObject)
+]
 
 with open(doc_dir + '/GPI/classes.rst', 'w') as cf:
 
