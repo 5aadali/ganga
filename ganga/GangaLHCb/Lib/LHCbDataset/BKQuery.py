@@ -169,13 +169,13 @@ RecoToDST-07/90000000/DST" ,
             if self.selection:
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
-        cmd = "getDataset('%s','%s','%s','%s','%s','%s')" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection)
+        cmd = "getDataset('%s','%s','%s','%s','%s','%s', %s)" % (self.path, self.dqflag,
+                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
-            cmd = "getDataset('%s',%s,'%s','%s','%s','%s')" % (self.path, self.dqflag, self.type, self.startDate,
-                                                               self.endDate, self.selection)
+            cmd = "getDataset('%s',%s,'%s','%s','%s','%s', %s)" % (self.path, self.dqflag, self.type, self.startDate,
+                                                               self.endDate, self.selection, self.SMOG2)
         result = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
         logger.debug("Finished Running Command")
         files = []
