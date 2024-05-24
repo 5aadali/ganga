@@ -24,8 +24,6 @@ def store_dirac_environment():
 #    except KeyError:
 #        logger.error("Environment variable %s is missing. Can't cache LHCbDIRAC environment.", platform_env_var)
 #        raise PluginError
-    # While LHCbDirac is only available for gcc49 we shall unfortunately hard-code the platform.
-    platform = 'x86_64-slc6-gcc49-opt'
 
     requestedVersion = GangaCore.Utility.Config.getConfig('LHCb')['LHCbDiracVersion']
 
@@ -33,7 +31,7 @@ def store_dirac_environment():
         logger.warn(
             f"Specific DIRAC version ({requestedVersion}) is set in the [LHCb]LHCbDiracVersion configuration parameter. Unless you really know what you are doing, this should not be done.")
 
-    fdir = join(expanduser("~/.cache/Ganga/GangaLHCb"), platform)
+    fdir = expanduser("~/.cache/Ganga/GangaLHCb")
     fname = join(fdir, requestedVersion)
 
     cmd = (
@@ -50,7 +48,7 @@ def store_dirac_environment():
             raise OptionValueError(f"LHCbDirac version {requestedVersion} does not exist")
     try:
         write_env_cache(env, fname)
-        logger.debug(f"Storing new LHCbDirac environment ({requestedVersion}:{platform})")
+        logger.debug(f"Storing new LHCbDirac environment ({requestedVersion})")
     except (OSError, IOError, TypeError):
         logger.error("Unable to store LHCbDirac environment")
         raise PluginError
