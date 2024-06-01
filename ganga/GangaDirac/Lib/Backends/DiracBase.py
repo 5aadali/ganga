@@ -824,6 +824,7 @@ class DiracBase(IBackend):
             outputfiles_foreach(j, DiracFile, lambda x: clearFileInfo(x))
 
     @require_disk_space
+    @require_credential
     def getOutputData(self, outputDir=None, names=None, force=False, ignoreMissing=False):
         """Retrieve data stored on SE to dir (default=job output workspace).
         If names=None, then all outputdata is downloaded otherwise names should
