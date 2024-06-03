@@ -351,6 +351,7 @@ def test_removeOutputData(db):
 
 
 def test_getOutputData(db, tmpdir):
+    mocker.patch('GangaCore.GPIDev.Credentials.credential_store')
     from GangaDirac.Lib.Files.DiracFile import DiracFile
 
     def fake_replicas(lfns):
