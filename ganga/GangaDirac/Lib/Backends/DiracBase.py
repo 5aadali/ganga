@@ -1137,7 +1137,6 @@ class DiracBase(IBackend):
                 )
             except Exception as err:
                 raise GangaDiracError(str(err))
-    
 
     @staticmethod
     async def complete_dirac_job(job):
@@ -1328,7 +1327,7 @@ class DiracBase(IBackend):
             job.been_queued = True
             task = monitoring_component.loop.create_task(
                 DiracBase._internal_job_finalisation(job, updated_dirac_status))
-                
+
             try:
                 await task
             except GangaDiracError as err:
@@ -1356,7 +1355,7 @@ class DiracBase(IBackend):
                     logger.error("Unable to finalise job %s after %s retries due to error:\n%s" %
                                  (job.getFQID('.'), str(count), str(err)))
                     job.force_status('failed')
-                    raise            
+                    raise
 
             time.sleep(sleep_length)
 
