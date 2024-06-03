@@ -350,7 +350,7 @@ def test_removeOutputData(db):
             assert db.removeOutputData() is None
 
 
-def test_getOutputData(db, tmpdir):
+def test_getOutputData(db, tmpdir, mocker):
     mocker.patch('GangaCore.GPIDev.Credentials.credential_store')
     from GangaDirac.Lib.Files.DiracFile import DiracFile
 
