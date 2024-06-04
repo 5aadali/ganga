@@ -74,6 +74,7 @@ class AsyncMonitoringService(GangaThread):
         if job_slice and len(found_active_backends)==0:
             log.debug("No active backends found with a job slice. Turning off the monitoring loop")
             self.enabled = False
+            return
 
         # If a backend is newly found as active, trigger its monitoring
         previously_active_backends = self.active_backends
