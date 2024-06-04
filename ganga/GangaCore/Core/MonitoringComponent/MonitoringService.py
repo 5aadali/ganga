@@ -71,6 +71,10 @@ class AsyncMonitoringService(GangaThread):
                 log.debug("RegistryLockError: The job was most likely removed")
                 log.debug("Reg LockError%s" % str(err))
 
+        if job_slice and len(found_active_backends)==0:
+            log.debug("No active backends found with a job slice. Turning off the monitoring loop")
+            self.enabled = False
+
         # If a backend is newly found as active, trigger its monitoring
         previously_active_backends = self.active_backends
         self.active_backends = found_active_backends
@@ -84,7 +88,7 @@ class AsyncMonitoringService(GangaThread):
         if previously_active_backends:
             self._cleanup_finished_backends(previously_active_backends, found_active_backends)
 
-        self.loop.call_later(POLL_RATE, self._check_active_backends)
+        self.loop.call_later(POLL_RATE, self._check_active_backends, job_slice)
 
     def _log_backend_summary(self, active_backends):
         summary = "{"
@@ -240,7 +244,6 @@ class AsyncMonitoringService(GangaThread):
         Note:         
           This method is meant to be used in Ganga scripts to request monitoring on demand. 
         """
-
         log.debug("runMonitoring")
         if not self.alive:
             log.error("Cannot run the monitoring loop. It has already been stopped")
