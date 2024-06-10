@@ -55,4 +55,4 @@ def bootstrap(reg_slice, interactive_session, my_interface=None):
         import GangaCore.GPI
         my_interface = GangaCore.GPI
 
-    exportToInterface(my_interface, 'runMonitoring', monitoring_component.enable, 'Functions')
+    exportToInterface(my_interface, 'runMonitoring', monitoring_component.runMonitoring, 'Functions')
