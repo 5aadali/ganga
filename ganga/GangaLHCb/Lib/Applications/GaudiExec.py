@@ -196,9 +196,9 @@ class GaudiExec(IPrepareApp):
         'nMakeCores': SimpleItem(defvalue=1,
                                  doc='Number of cores to be provided via the "-j" option to the "make" command'\
                                      'when building the ganga-input-sandbox'),
-        'useApptainer' : SimpleItem(defvalue=False, doc="Run the commands in apptainer"),
-        'containerLocation' : SimpleItem(defvalue='/cvmfs/lhcb.cern.ch/containers/os-base/slc6-devel/prod/amd64',
-                                         doc='Where is the container to use for the build located'),
+        'useApptainer': SimpleItem(defvalue=False, doc="Run the commands in apptainer"),
+        'containerLocation': SimpleItem(defvalue='/cvmfs/lhcb.cern.ch/containers/os-base/slc6-devel/prod/amd64',
+                                        doc='Where is the container to use for the build located'),
         # Prepared job object
         'is_prepared': SimpleItem(defvalue=None, strict_sequence=0, visitable=1, copyable=1, hidden=0,
                                   typelist=[None, ShareDir], protected=0, comparable=1,
@@ -561,8 +561,8 @@ class GaudiExec(IPrepareApp):
             if self.useApptainer or 'slc6' in self.platform:
                 try:
                     logger.info('Building inside apptainer: %s' % self.containerLocation)
-                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(cmd_file.name)\
-                                 + self.containerLocation + ' bash -c "%s"' % initialCommand
+                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(
+                        cmd_file.name) + self.containerLocation + ' bash -c "%s"' % initialCommand
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
                 except BaseException:
                     logger.error('Failed to build the application inside a container. '
@@ -577,8 +577,8 @@ class GaudiExec(IPrepareApp):
                 raise GangaException("Failed to execute command")
             if cmd != 'make':
                 if self.useApptainer or 'slc6' in self.platform:
-                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(cmd_file.name)\
-                                 + self.containerLocation + ' %s' % cmd_file.name
+                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(
+                        cmd_file.name) + self.containerLocation + ' %s' % cmd_file.name
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
                 else:
                     rc, stdout, stderr = _exec_cmd(cmd_file.name, self.directory)
@@ -586,8 +586,8 @@ class GaudiExec(IPrepareApp):
             if self.useApptainer or 'slc6' in self.platform:
                 try:
                     logger.info('Building inside apptainer: %s' % self.containerLocation)
-                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(cmd_file.name)\
-                                 + self.containerLocation + ' bash -c "source ' + cmd_file.name + '"'
+                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(
+                        cmd_file.name) + self.containerLocation + ' bash -c "source ' + cmd_file.name + '"'
                     rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
                 except BaseException:
                     logger.error('Failed to build the application inside a container. '
