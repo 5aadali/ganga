@@ -576,7 +576,12 @@ class GaudiExec(IPrepareApp):
                 logger.error("StdErr: %s" % str(stderr))
                 raise GangaException("Failed to execute command")
             if cmd != 'make':
-                rc, stdout, stderr = _exec_cmd(cmd_file.name, self.directory)
+                if self.useApptainer or 'slc6' in self.platform:
+                    cmd_to_run = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && apptainer exec --bind $PWD --bind %s --bind /cvmfs:/cvmfs:ro ' % path.dirname(cmd_file.name)\
+                                 + self.containerLocation + ' %s' % cmd_file.name
+                    rc, stdout, stderr = _exec_cmd(cmd_to_run, self.directory)
+                else:
+                    rc, stdout, stderr = _exec_cmd(cmd_file.name, self.directory)
         else:
             if self.useApptainer or 'slc6' in self.platform:
                 try:
