@@ -1,6 +1,5 @@
 from os import rename, path, unlink, listdir, chmod
 from os import stat as os_stat
-import os
 import random
 import tempfile
 import time
@@ -178,10 +177,10 @@ class GaudiExec(IPrepareApp):
         'uploadedInput': GangaFileItem(defvalue=None, hidden=1,
                                        doc='This stores the pre-uploaded input for the job so that it gets to the WN'),
         'jobScriptArchive': GangaFileItem(defvalue=None, hidden=1, copyable=0,
-                                          doc='This file stores the uploaded scripts which are generated from this'\
+                                          doc='This file stores the uploaded scripts which are generated from this'
                                               'app to run on the WN'),
         'useGaudiRun': SimpleItem(defvalue=True,
-                                  doc='Should \'options\' be run as "python options.py data.py"'\
+                                  doc='Should \'options\' be run as "python options.py data.py"'
                                       'rather than "gaudirun.py options.py data.py"'),
         'platform': SimpleItem(defvalue=configLHCb['defaultPlatform'], typelist=[str],
                                doc='Platform the application was built for'),
@@ -194,7 +193,7 @@ class GaudiExec(IPrepareApp):
                                doc='A list of arguments to pass to the lb-run script at run time. i.e. --quiet'),
         'getMetadata': SimpleItem(defvalue=False, doc='Do you want to get the metadata from your jobs'),
         'nMakeCores': SimpleItem(defvalue=1,
-                                 doc='Number of cores to be provided via the "-j" option to the "make" command'\
+                                 doc='Number of cores to be provided via the "-j" option to the "make" command'
                                      'when building the ganga-input-sandbox'),
         'useApptainer': SimpleItem(defvalue=False, doc="Run the commands in apptainer"),
         'containerLocation': SimpleItem(defvalue='/cvmfs/lhcb.cern.ch/containers/os-base/slc6-devel/prod/amd64',
@@ -202,12 +201,12 @@ class GaudiExec(IPrepareApp):
         # Prepared job object
         'is_prepared': SimpleItem(defvalue=None, strict_sequence=0, visitable=1, copyable=1, hidden=0,
                                   typelist=[None, ShareDir], protected=0, comparable=1,
-                                  doc='Location of shared resources. Presence of this attribute implies the'\
+                                  doc='Location of shared resources. Presence of this attribute implies the'
                                       ' application has been prepared.'),
         'hash': SimpleItem(defvalue=None, typelist=[None, str], hidden=1,
                            doc='MD5 hash of the string representation of applications preparable attributes'),
         'envVars': SimpleItem(defvalue=None, typelist=[None, dict], hidden=1,
-                              doc='A dict to store the environment variable "XMLSUMMARYBASEROOT"'\
+                              doc='A dict to store the environment variable "XMLSUMMARYBASEROOT"'
                                   ' for use when merging the XML summary'),
     })
     _category = 'applications'
