@@ -2476,7 +2476,7 @@ class Job(GangaObject):
                                 "completed_frozen",
                             ]:
                                 jobs.updateStatus(
-                                    "killed", transition_update=transition_update
+                                    "killed", transition_update=transition_update, update_master = False
                                 )
                     self.updateStatus("killed", transition_update=transition_update)
                     #
