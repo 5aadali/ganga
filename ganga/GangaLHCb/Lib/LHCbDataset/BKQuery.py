@@ -1,4 +1,4 @@
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 import os
 import datetime
 from GangaCore.Core.exceptions import GangaException
@@ -14,7 +14,7 @@ from GangaCore.Utility.logging import getLogger
 from GangaLHCb.Lib.LHCbDataset import LHCbDataset, LHCbCompressedDataset
 from GangaLHCb.Lib.Backends.Dirac import filterLFNsBySE
 logger = getLogger()
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 
 
 class BKQuery(GangaObject):
@@ -101,7 +101,7 @@ RecoToDST-07/90000000/DST" ,
     schema['SMOG2'] = SimpleItem(defvalue='', typelist=['str', 'list'],
                                  doc='Specify the state of SMOG2')
     schema['retry_limit'] = SimpleItem(defvalue=1, typelist=['int'],
-                                        doc='Number of times to retry the DIRAC commands')
+                                       doc='Number of times to retry the DIRAC commands')
     _schema = Schema(Version(1, 2), schema)
     _category = 'query'
     _name = "BKQuery"
@@ -129,16 +129,16 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                   self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                               self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                     self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
 
         try:
             value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
-                                retry_limit = self.retry_limit)
+                               retry_limit=self.retry_limit)
         except GangaDiracError as err:
             return {'OK': False, 'Value': str(err)}
 
@@ -173,13 +173,17 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', %s)" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                 self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', %s)" % (self.path, self.dqflag, self.type, self.startDate,
-                                                               self.endDate, self.selection, self.SMOG2)
-        result = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements, retry_limit = self.retry_limit)
+                                                                   self.endDate, self.selection, self.SMOG2)
+        result = get_result(
+            cmd,
+            'BK query error.',
+            credential_requirements=self.credential_requirements,
+            retry_limit=self.retry_limit)
         logger.debug("Finished Running Command")
         files = []
         value = result
@@ -209,7 +213,7 @@ RecoToDST-07/90000000/DST" ,
             logger.debug('Detected an MC data set. Checking if it has been archived')
             all_reps = get_result("getReplicas(%s)" % files, 'Get replica error.',
                                   credential_requirements=self.credential_requirements,
-                                  retry_limit = self.retry_limit)
+                                  retry_limit=self.retry_limit)
             if 'Successful' in all_reps:
                 all_ses = set([])
                 for _lfn, _repz in all_reps['Successful'].items():
@@ -219,7 +223,7 @@ RecoToDST-07/90000000/DST" ,
             for _se in all_ses:
                 is_archived = get_result("isSEArchive('%s')" % _se, 'Check archive error.',
                                          credential_requirements=self.credential_requirements,
-                                         retry_limit = self.retry_limit)
+                                         retry_limit=self.retry_limit)
                 if not is_archived:
                     all_archived = False
                     break
@@ -246,7 +250,7 @@ RecoToDST-07/90000000/DST" ,
 
         return addProxy(ds)
 
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 
 
 class BKQueryDict(GangaObject):
@@ -300,7 +304,7 @@ class BKQueryDict(GangaObject):
         cmd = 'bkQueryDict(%s)' % self.dict
         try:
             value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
-                                retry_limit = self.retry_limit)
+                               retry_limit=self.retry_limit)
         except GangaDiracError as err:
             return {'OK': False, 'Value': {}}
 
@@ -323,7 +327,7 @@ class BKQueryDict(GangaObject):
             return None
         cmd = 'bkQueryDict(%s)' % self.dict
         value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
-                            retry_limit = self.retry_limit)
+                           retry_limit=self.retry_limit)
 
         files = []
         if 'LFNs' in value:
@@ -338,4 +342,4 @@ class BKQueryDict(GangaObject):
 
         return addProxy(ds)
 
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
