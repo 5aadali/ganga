@@ -1,12 +1,9 @@
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
-import os
-import datetime
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 from GangaCore.Core.exceptions import GangaException
 from GangaCore.GPIDev.Schema import Schema, Version, SimpleItem, ComponentItem
 from GangaCore.GPIDev.Base import GangaObject
-from GangaCore.GPIDev.Base.Proxy import isType, stripProxy, addProxy
+from GangaCore.GPIDev.Base.Proxy import isType, addProxy
 from GangaCore.GPIDev.Credentials import require_credential
-from GangaDirac.Lib.Credentials.DiracProxy import DiracProxy
 from GangaDirac.Lib.Backends.DiracUtils import get_result
 from GangaDirac.Lib.Utilities.DiracUtilities import GangaDiracError
 from GangaDirac.Lib.Files.DiracFile import DiracFile
@@ -14,7 +11,7 @@ from GangaCore.Utility.logging import getLogger
 from GangaLHCb.Lib.LHCbDataset import LHCbDataset, LHCbCompressedDataset
 from GangaLHCb.Lib.Backends.Dirac import filterLFNsBySE
 logger = getLogger()
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 
 
 class BKQuery(GangaObject):
@@ -100,6 +97,8 @@ RecoToDST-07/90000000/DST" ,
                                            doc='Return the data set, even if all the LFNs are archived')
     schema['SMOG2'] = SimpleItem(defvalue='', typelist=['str', 'list'],
                                  doc='Specify the state of SMOG2')
+    schema['retry_limit'] = SimpleItem(defvalue=1, typelist=['int'],
+                                       doc='Number of times to retry the DIRAC commands')
     _schema = Schema(Version(1, 2), schema)
     _category = 'query'
     _name = "BKQuery"
@@ -127,15 +126,18 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                   self.type, self.startDate, self.endDate,
+                                                                   self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                               self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                     self.type, self.startDate, self.endDate,
+                                                                     self.selection, self.SMOG2)
 
         try:
-            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                               retry_limit=self.retry_limit)
         except GangaDiracError as err:
             return {'OK': False, 'Value': str(err)}
 
@@ -170,13 +172,18 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', %s)" % (self.path, self.dqflag,
-                                                             self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                 self.type, self.startDate, self.endDate,
+                                                                 self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', %s)" % (self.path, self.dqflag, self.type, self.startDate,
-                                                               self.endDate, self.selection, self.SMOG2)
-        result = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+                                                                   self.endDate, self.selection, self.SMOG2)
+        result = get_result(
+            cmd,
+            'BK query error.',
+            credential_requirements=self.credential_requirements,
+            retry_limit=self.retry_limit)
         logger.debug("Finished Running Command")
         files = []
         value = result
@@ -205,7 +212,8 @@ RecoToDST-07/90000000/DST" ,
         if isMC and self.check_archived:
             logger.debug('Detected an MC data set. Checking if it has been archived')
             all_reps = get_result("getReplicas(%s)" % files, 'Get replica error.',
-                                  credential_requirements=self.credential_requirements)
+                                  credential_requirements=self.credential_requirements,
+                                  retry_limit=self.retry_limit)
             if 'Successful' in all_reps:
                 all_ses = set([])
                 for _lfn, _repz in all_reps['Successful'].items():
@@ -214,16 +222,19 @@ RecoToDST-07/90000000/DST" ,
             all_archived = True
             for _se in all_ses:
                 is_archived = get_result("isSEArchive('%s')" % _se, 'Check archive error.',
-                                         credential_requirements=self.credential_requirements)
+                                         credential_requirements=self.credential_requirements,
+                                         retry_limit=self.retry_limit)
                 if not is_archived:
                     all_archived = False
                     break
             if all_archived and not self.ignore_archived:
                 raise GangaDiracError(
-                    "All the files are only available on archive SEs. It is likely the data set has been archived. Contact data management to request that it be staged")
+                    "All the files are only available on archive SEs. It is likely the data set has been archived. "
+                    "Contact data management to request that it be staged")
             elif all_archived:
                 logger.warning(
-                    "All the files are only available on archive SEs. It is likely the data set has been archived. Contact data management to request that it be staged")
+                    "All the files are only available on archive SEs. It is likely the data set has been archived. "
+                    "Contact data management to request that it be staged")
 
         if compressed:
             ds = LHCbCompressedDataset(files)
@@ -241,7 +252,7 @@ RecoToDST-07/90000000/DST" ,
 
         return addProxy(ds)
 
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
 
 
 class BKQueryDict(GangaObject):
@@ -294,8 +305,9 @@ class BKQueryDict(GangaObject):
             return None
         cmd = 'bkQueryDict(%s)' % self.dict
         try:
-            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
-        except GangaDiracError as err:
+            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                               retry_limit=self.retry_limit)
+        except GangaDiracError:
             return {'OK': False, 'Value': {}}
 
         files = []
@@ -316,7 +328,8 @@ class BKQueryDict(GangaObject):
         if not self.dict:
             return None
         cmd = 'bkQueryDict(%s)' % self.dict
-        value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+        value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                           retry_limit=self.retry_limit)
 
         files = []
         if 'LFNs' in value:
@@ -331,4 +344,4 @@ class BKQueryDict(GangaObject):
 
         return addProxy(ds)
 
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
+# \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#

@@ -41,7 +41,6 @@ from GangaDirac.Lib.Utilities.DiracUtilities import GangaDiracError, execute
 
 
 configDirac = getConfig('DIRAC')
-default_finaliseOnMaster = configDirac['default_finaliseOnMaster']
 default_downloadOutputSandbox = configDirac['default_downloadOutputSandbox']
 default_unpackOutputSandbox = configDirac['default_unpackOutputSandbox']
 logger = getLogger()
@@ -131,8 +130,6 @@ class DiracBase(IBackend):
         'credential_requirements': ComponentItem('CredentialRequirement', defvalue=DiracProxy),
         'blockSubmit': SimpleItem(defvalue=True,
                                   doc='Shall we use the block submission?'),
-        'finaliseOnMaster': SimpleItem(defvalue=default_finaliseOnMaster,
-                                       doc='Finalise the subjobs all in one go when they are all finished.'),
         'downloadSandbox': SimpleItem(defvalue=default_downloadOutputSandbox,
                                       doc='Do you want to download the output sandbox when the job finalises.'),
         'unpackOutputSandbox': SimpleItem(defvalue=default_unpackOutputSandbox, hidden=True,
@@ -1084,15 +1081,6 @@ class DiracBase(IBackend):
             job (Job): Thi is the job we want to finalise
             updated_dirac_status (str): String representing the Ganga finalisation state of the job failed/completed
         """
-        if job.backend.finaliseOnMaster and job.master and updated_dirac_status == 'completed':
-            job.updateStatus('completing')
-            allComplete = True
-            for sj in job.master.subjobs:
-                if sj.status not in ['completing', 'failed', 'killed', 'removed', 'completed']:
-                    allComplete = False
-                    break
-            if allComplete:
-                DiracBase.finalise_jobs(job.master.subjobs, job.master.backend.downloadSandbox)
 
         if updated_dirac_status == 'completed':
             try:
