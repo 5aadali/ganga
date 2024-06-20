@@ -1,12 +1,9 @@
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\#
-import os
-import datetime
 from GangaCore.Core.exceptions import GangaException
 from GangaCore.GPIDev.Schema import Schema, Version, SimpleItem, ComponentItem
 from GangaCore.GPIDev.Base import GangaObject
-from GangaCore.GPIDev.Base.Proxy import isType, stripProxy, addProxy
+from GangaCore.GPIDev.Base.Proxy import isType, addProxy
 from GangaCore.GPIDev.Credentials import require_credential
-from GangaDirac.Lib.Credentials.DiracProxy import DiracProxy
 from GangaDirac.Lib.Backends.DiracUtils import get_result
 from GangaDirac.Lib.Utilities.DiracUtilities import GangaDiracError
 from GangaDirac.Lib.Files.DiracFile import DiracFile
@@ -129,12 +126,14 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                                   self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                   self.type, self.startDate, self.endDate,
+                                                                   self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', '%s')" % (self.path, self.dqflag,
-                                                                     self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                     self.type, self.startDate, self.endDate,
+                                                                     self.selection, self.SMOG2)
 
         try:
             value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
@@ -173,7 +172,8 @@ RecoToDST-07/90000000/DST" ,
                 msg = 'selection not supported for type="%s".' % self.type
                 raise GangaException(msg)
         cmd = "getDataset('%s','%s','%s','%s','%s','%s', %s)" % (self.path, self.dqflag,
-                                                                 self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
+                                                                 self.type, self.startDate, self.endDate,
+                                                                 self.selection, self.SMOG2)
         from GangaCore.GPIDev.Lib.GangaList.GangaList import GangaList
         knownLists = [tuple, list, GangaList]
         if isType(self.dqflag, knownLists):
@@ -229,10 +229,12 @@ RecoToDST-07/90000000/DST" ,
                     break
             if all_archived and not self.ignore_archived:
                 raise GangaDiracError(
-                    "All the files are only available on archive SEs. It is likely the data set has been archived. Contact data management to request that it be staged")
+                    "All the files are only available on archive SEs. It is likely the data set has been archived. "
+                    "Contact data management to request that it be staged")
             elif all_archived:
                 logger.warning(
-                    "All the files are only available on archive SEs. It is likely the data set has been archived. Contact data management to request that it be staged")
+                    "All the files are only available on archive SEs. It is likely the data set has been archived. "
+                    "Contact data management to request that it be staged")
 
         if compressed:
             ds = LHCbCompressedDataset(files)
@@ -305,7 +307,7 @@ class BKQueryDict(GangaObject):
         try:
             value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
                                retry_limit=self.retry_limit)
-        except GangaDiracError as err:
+        except GangaDiracError:
             return {'OK': False, 'Value': {}}
 
         files = []
