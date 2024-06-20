@@ -100,6 +100,8 @@ RecoToDST-07/90000000/DST" ,
                                            doc='Return the data set, even if all the LFNs are archived')
     schema['SMOG2'] = SimpleItem(defvalue='', typelist=['str', 'list'],
                                  doc='Specify the state of SMOG2')
+    schema['retry_limit'] = SimpleItem(defvalue=1, typelist=['int'],
+                                        doc='Number of times to retry the DIRAC commands')
     _schema = Schema(Version(1, 2), schema)
     _category = 'query'
     _name = "BKQuery"
@@ -135,7 +137,8 @@ RecoToDST-07/90000000/DST" ,
                                                                self.type, self.startDate, self.endDate, self.selection, self.SMOG2)
 
         try:
-            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                                retry_limit = self.retry_limit)
         except GangaDiracError as err:
             return {'OK': False, 'Value': str(err)}
 
@@ -176,7 +179,7 @@ RecoToDST-07/90000000/DST" ,
         if isType(self.dqflag, knownLists):
             cmd = "getDataset('%s',%s,'%s','%s','%s','%s', %s)" % (self.path, self.dqflag, self.type, self.startDate,
                                                                self.endDate, self.selection, self.SMOG2)
-        result = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+        result = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements, retry_limit = self.retry_limit)
         logger.debug("Finished Running Command")
         files = []
         value = result
@@ -205,7 +208,8 @@ RecoToDST-07/90000000/DST" ,
         if isMC and self.check_archived:
             logger.debug('Detected an MC data set. Checking if it has been archived')
             all_reps = get_result("getReplicas(%s)" % files, 'Get replica error.',
-                                  credential_requirements=self.credential_requirements)
+                                  credential_requirements=self.credential_requirements,
+                                  retry_limit = self.retry_limit)
             if 'Successful' in all_reps:
                 all_ses = set([])
                 for _lfn, _repz in all_reps['Successful'].items():
@@ -214,7 +218,8 @@ RecoToDST-07/90000000/DST" ,
             all_archived = True
             for _se in all_ses:
                 is_archived = get_result("isSEArchive('%s')" % _se, 'Check archive error.',
-                                         credential_requirements=self.credential_requirements)
+                                         credential_requirements=self.credential_requirements,
+                                         retry_limit = self.retry_limit)
                 if not is_archived:
                     all_archived = False
                     break
@@ -294,7 +299,8 @@ class BKQueryDict(GangaObject):
             return None
         cmd = 'bkQueryDict(%s)' % self.dict
         try:
-            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+            value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                                retry_limit = self.retry_limit)
         except GangaDiracError as err:
             return {'OK': False, 'Value': {}}
 
@@ -316,7 +322,8 @@ class BKQueryDict(GangaObject):
         if not self.dict:
             return None
         cmd = 'bkQueryDict(%s)' % self.dict
-        value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements)
+        value = get_result(cmd, 'BK query error.', credential_requirements=self.credential_requirements,
+                            retry_limit = self.retry_limit)
 
         files = []
         if 'LFNs' in value:
