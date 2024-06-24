@@ -2462,7 +2462,7 @@ class Job(GangaObject):
                     raise JobError(msg)
             try:
                 if self.backend.master_kill():
-                    have_failures ='killed' 
+                    have_failures = 'killed'
                     ############
                     # added as part of typestamp prototype by Justin
                     if not self._getParent():
