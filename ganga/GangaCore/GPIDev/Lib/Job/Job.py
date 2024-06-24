@@ -2462,6 +2462,7 @@ class Job(GangaObject):
                     raise JobError(msg)
             try:
                 if self.backend.master_kill():
+                    have_failures = False
                     ############
                     # added as part of typestamp prototype by Justin
                     if not self._getParent():
@@ -2476,9 +2477,14 @@ class Job(GangaObject):
                                 "completed_frozen",
                             ]:
                                 jobs.updateStatus(
-                                    "killed", transition_update=transition_update, update_master=False
+                                    "killed", transition_update=transition_update
                                 )
-                    self.updateStatus("killed", transition_update=transition_update)
+                            elif jobs.status in ['failed', 'failed_frozen']:
+                                have_failures = True
+                    if have_failures:
+                        self.updateStatus("failed", transition_update=transition_update)
+                    else:
+                        self.updateStatus("killed", transition_update=transition_update)
                     #
                     ############
 
