@@ -492,7 +492,7 @@ class GaudiExec(IPrepareApp):
         Return the script which wraps the running command in a correct environment
         """
         if isLbEnv:
-            return 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && export BINARY_TAG={PLATFORM}'\
+            return 'unset LBENV_SOURCED && source /cvmfs/lhcb.cern.ch/lib/LbEnv && export BINARY_TAG={PLATFORM}'\
                    ' && export CMTCONFIG={PLATFORM} && '.format(PLATFORM=self.platform)
         else:
             return 'export CMTCONFIG=%s; source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh --cmtconfig=%s && ' % (
@@ -550,12 +550,11 @@ class GaudiExec(IPrepareApp):
         # I would have preferred to execute all commands against inside `./run` so we have some sane behaviour
         # but this requires a build to have been run before we can use this
         # command reliably... so we're just going to be explicit
-
         if not path.isfile(path.join(self.directory, 'build.%s' % self.platform, 'run')):
             initialCommand = 'export CMTCONFIG=%s && export BINARY_TAG=%s && source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh --cmtconfig=%s && make -j%s' % (
                 self.platform, self.platform, self.platform, self.nMakeCores)
             if isLbEnv:
-                initialCommand = 'source /cvmfs/lhcb.cern.ch/lib/LbEnv && source LbLogin.sh -c %s && make -j%s' % (
+                initialCommand = 'unset LBENV_SOURCED && source /cvmfs/lhcb.cern.ch/lib/LbEnv && lb-set-platform %s && make -j%s' % (
                     self.platform, self.nMakeCores)
             if self.useApptainer or 'slc6' in self.platform:
                 try:
