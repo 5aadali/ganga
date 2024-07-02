@@ -293,7 +293,7 @@ jobs:
     if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     container:
-      image: centos:7
+      image: almalinux:9
       options: --privileged
     steps:
       - name: Install CVM-FS
@@ -329,7 +329,7 @@ jobs:
     if: always() && !failure() && !cancelled()
     runs-on: ubuntu-latest
     container:
-      image: centos:7
+      image: almalinux:9
       options: --privileged
     steps:
       - name: Install git
