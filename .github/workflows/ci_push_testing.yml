@@ -312,10 +312,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install virtualenv and dependencies
         run: |
-          /cvmfs/sft.cern.ch/lcg/releases/LCG_100/Python/3.8.6/x86_64-centos7-gcc9-opt/bin/python3 -m venv ~/venv
+          /cvmfs/sft.cern.ch/lcg/releases/LCG_105c/Python/3.9.12/x86_64-el9-gcc13-opt/bin/python3 -m venv ~/venv
           . ~/venv/bin/activate
           yum install -y glibc-devel
-          export CC=/cvmfs/sft.cern.ch/lcg/releases/gcc/7.3.0/x86_64-centos7/bin/gcc
+          export CC=/cvmfs/sft.cern.ch/lcg/releases/gcc/12.1.0-57c96/x86_64-centos9/bin/gcc
           python3 -m pip install --upgrade pip setuptools wheel
           python3 -m pip install -e .[dev,LHCb,Dirac]
       - name: Test with pytest
@@ -360,10 +360,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install virtualenv and dependencies
         run: |
-          /cvmfs/sft.cern.ch/lcg/releases/LCG_100/Python/3.8.6/x86_64-centos7-gcc9-opt/bin/python3 -m venv ~/venv
+          /cvmfs/sft.cern.ch/lcg/releases/LCG_105c/Python/3.9.12/x86_64-el9-gcc13-opt/bin/python3 -m venv ~/venv
           . ~/venv/bin/activate
           yum install -y glibc-devel
-          export CC=/cvmfs/sft.cern.ch/lcg/releases/gcc/7.3.0/x86_64-centos7/bin/gcc
+          export CC=/cvmfs/sft.cern.ch/lcg/releases/gcc/12.1.0-57c96/x86_64-centos9/bin/gcc
           python3 -m pip install --upgrade pip setuptools wheel
           python3 -m pip install -e .[dev,LHCb,Dirac]
       - name: Install gangarc file
