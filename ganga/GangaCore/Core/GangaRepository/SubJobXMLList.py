@@ -1,14 +1,12 @@
-from GangaCore.GPIDev.Schema.Schema import Schema, SimpleItem, Version
+from GangaCore.GPIDev.Schema.Schema import Schema, Version
 from GangaCore.GPIDev.Base.Objects import GangaObject
 from GangaCore.Utility.logging import getLogger
 from GangaCore.Core.GangaRepository.GangaRepository import RepositoryError
 from GangaCore.Core.exceptions import GangaException
-from GangaCore.GPIDev.Base.Proxy import stripProxy
 from GangaCore.Core.GangaRepository.VStreamer import XMLFileError
 import errno
 import copy
 import threading
-import shutil
 from os import listdir, path, stat
 
 logger = getLogger()
@@ -152,7 +150,7 @@ class SubJobXMLList(GangaObject):
                 try:
                     index_file_obj = open(index_file, "rb")
                     self._subjobIndexData = from_file(index_file_obj)[0]
-                except IOError as err:
+                except IOError:
                     self._subjobIndexData = None
                     self._setDirty()
 
@@ -249,7 +247,8 @@ class SubJobXMLList(GangaObject):
         return SJXLIterator(self)
 
     def __get_dataFile(self, index, force_backup=False):
-        """Get the filename for this file (with out without backup '~'. Store already determine combinations in _cached_filenames for speed
+        """Get the filename for this file (with out without backup '~'.
+        Store already determine combinations in _cached_filenames for speed
         Args:
             index (int): This is the index of the subjob we're interested in
             force_backup (bool): Should we force the loading from the backup XML
@@ -270,7 +269,8 @@ class SubJobXMLList(GangaObject):
         return subjob_data
 
     def __len__(self):
-        """ return length or lookup the last modified time compare against self._stored_len[0] and if nothings changed return self._stored_len[1]"""
+        """ return length or lookup the last modified time compare against self._stored_len[0]
+        and if nothings changed return self._stored_len[1]"""
         try:
             this_time = stat(self._jobDirectory).st_ctime
         except OSError:
@@ -315,7 +315,7 @@ class SubJobXMLList(GangaObject):
             logger.debug("Error: %s" % err)
             try:
                 job_obj = self._getParent()
-            except Exception as err:
+            except Exception:
                 job_obj = None
         return job_obj
 
@@ -325,7 +325,7 @@ class SubJobXMLList(GangaObject):
         if job_obj is not None:
             try:
                 fqid = job_obj.getFQID('.')
-            except Exception as err:
+            except Exception:
                 try:
                     fqid = job_obj.id
                 except BaseException:
@@ -423,7 +423,7 @@ class SubJobXMLList(GangaObject):
                 # load the subobject into a temporary object
                 try:
                     loaded_sj = from_file(sj_file)[0]
-                except (IOError, XMLFileError) as err:
+                except (IOError, XMLFileError):
 
                     try:
                         logger.warning("Loading subjob #%s for job #%s from backup, recent changes may be lost" % (
@@ -558,8 +558,10 @@ class SubJobXMLList(GangaObject):
         super(SubJobXMLList, self)._setFlushed()
 
     def _private_display(self, reg_slice, this_format, default_width, markup):
-        """ This is a private display method which makes use of the display slice as well as knowlede of the wanted format, default_width and markup to be used
-        Given it's  display method this returns a displayable string. Given it's tied into the RegistrySlice it's similar to that
+        """ This is a private display method which makes use of the display slice as well as knowlede of the wanted format,
+        default_width and markup to be used.
+        Given it's  display method this returns a displayable string.
+        Given it's tied into the RegistrySlice it's similar to that
         Args:
             reg_slice (RegistrySlice): This is the registry slice which is the context in which this is called
             this_format (str): This is the format used in the registry slice for the formatting of the table
@@ -593,8 +595,9 @@ class SubJobXMLList(GangaObject):
     @staticmethod
     def checkJobHasChildren(jobDirectory, datafileName):
         """ Return True/False if given (job?) object has children associated with it
-        This function will test for the presence of all of the subjob XML in the appropriate folders and will trigger an exception
-        if/when some of the xml files are missing. This is subtly different to the default countSubJobDirs behaviour.
+        This function will test for the presence of all of the subjob XML in the appropriate folders
+        and will trigger an exception if/when some of the xml files are missing.
+        This is subtly different to the default countSubJobDirs behaviour.
         Args:
             jobDirectory (str): name of folder to be examined
             datafileName (str): name of the files containing the xml, i.e. 'data' by convention
@@ -607,12 +610,15 @@ class SubJobXMLList(GangaObject):
 
     @staticmethod
     def countSubJobDirs(jobDirectory, datafileName, checkDataFiles):
-        """ I'm a function which returns a number, my number corresponds to the amount of sequentially listed numerically named folders exiting within 'jobDirectory'
-            This (optionally) checks for the existance of all of the XML files. This is useful during a call to 'jobHasChildrenTest' but not when calling __len__ repeatedly
+        """ I'm a function which returns a number, my number corresponds to the amount of sequentially
+        listed numerically named folders exiting within 'jobDirectory'.
+        This (optionally) checks for the existance of all of the XML files.
+        This is useful during a call to 'jobHasChildrenTest' but not when calling __len__ repeatedly
         Args:
             jobDirectory (str): name of folder to be examined
             datafileName (str): name of the files containing the xml, i.e. 'data' by convention
-            checkDataFiles (bool): if True check for the existance of all of the data files and check this against the numerically named folders
+            checkDataFiles (bool): if True check for the existance of all of the data files
+                                    and check this against the numerically named folders
         """
 
         jobDirectoryList = listdir(jobDirectory)
