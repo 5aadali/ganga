@@ -58,7 +58,7 @@ class SubJobXMLList(GangaObject):
             registry (Registry): the registry managing me,
             dataFileName (str): incase it ever changes, normally 'data'
             load_backup (bool): are we using the backpus only/first? This used to be set like this btw
-            paret (Job): parent of self after constuction
+            parent (Job): parent of self after constuction
         """
         super(SubJobXMLList, self).__init__()
 
@@ -126,7 +126,7 @@ class SubJobXMLList(GangaObject):
         # First check the id is not already in the job cache
         for k in job_dict.keys():
             if k in self._cachedJobs.keys():
-                raise RepositoryError("Subjob key %s is already in the subjob XML cache!" % k)
+                raise RepositoryError(self._registry.repository, "Subjob key %s is already in the subjob XML cache!" % k)
         # Now set the parent for the new subjobs
         for k, v in job_dict.items():
             v._setParent(parent)
@@ -414,7 +414,7 @@ class SubJobXMLList(GangaObject):
                         if isinstance(x, IOError) and x.errno == errno.ENOENT:
                             raise IOError("Subobject %s not found: %s" % (index, x))
                         else:
-                            raise RepositoryError(self, "IOError on loading subobject %s: %s" % (index, x))
+                            raise RepositoryError(self._registry.repository, "IOError on loading subobject %s: %s" % (index, x))
 
                 from GangaCore.Core.GangaRepository.VStreamer import from_file
 
