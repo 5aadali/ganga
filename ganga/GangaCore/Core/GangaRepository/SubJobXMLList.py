@@ -181,7 +181,7 @@ class SubJobXMLList(GangaObject):
                             new_data = self._registry.getIndexCache(self.__getitem__(subjob_id))
                             self._subjobIndexData[subjob_id] = new_data
                             continue
-                        #self._subjobIndexData = {}
+                        # self._subjobIndexData = {}
             except Exception as err:
                 logger.debug("Subjob Index file open, error: %s" % err)
                 self._subjobIndexData = {}
@@ -328,7 +328,7 @@ class SubJobXMLList(GangaObject):
             except Exception as err:
                 try:
                     fqid = job_obj.id
-                except:
+                except BaseException:
                     fqid = "unknown"
         else:
             fqid = "unknown"
@@ -340,11 +340,11 @@ class SubJobXMLList(GangaObject):
             subjob_data (str): filename for the subjob 'data' file we're interested in
         """
         # For debugging where this was called from to try and push it to as high a level as possible at runtime
-        #print("SJXML Load")
-        #import traceback
+        # print("SJXML Load")
+        # import traceback
         # traceback.print_stack()
         # print("\n\n\n")
-        #import sys
+        # import sys
         # sys.exit(-1)
         job_obj = self.getSafeJob()
         if job_obj is not None:
@@ -414,7 +414,9 @@ class SubJobXMLList(GangaObject):
                         if isinstance(x, IOError) and x.errno == errno.ENOENT:
                             raise IOError("Subobject %s not found: %s" % (index, x))
                         else:
-                            raise RepositoryError(self._registry.repository, "IOError on loading subobject %s: %s" % (index, x))
+                            raise RepositoryError(
+                                self._registry.repository, "IOError on loading subobject %s: %s" %
+                                (index, x))
 
                 from GangaCore.Core.GangaRepository.VStreamer import from_file
 
@@ -490,7 +492,7 @@ class SubJobXMLList(GangaObject):
     def getAllCachedData(self):
         """Get the cached data from the index for all subjobs"""
         cached_data = []
-        #logger.debug("Cache: %s" % self._subjobIndexData)
+        # logger.debug("Cache: %s" % self._subjobIndexData)
         if len(self._subjobIndexData) == len(self):
             for i in range(len(self)):
                 if self.isLoaded(i):
@@ -573,7 +575,7 @@ class SubJobXMLList(GangaObject):
             vals = []
             for item in reg_slice._display_columns:
                 display_str = "display:" + str(item)
-                #logger.debug("Looking for : %s" % display_str)
+                # logger.debug("Looking for : %s" % display_str)
                 width = reg_slice._display_columns_width.get(item, default_width)
                 try:
                     if item == 'fqid':
