@@ -554,7 +554,7 @@ class GaudiExec(IPrepareApp):
             initialCommand = 'export CMTCONFIG=%s && export BINARY_TAG=%s && source /cvmfs/lhcb.cern.ch/lib/LbLogin.sh --cmtconfig=%s && make -j%s' % (
                 self.platform, self.platform, self.platform, self.nMakeCores)
             if isLbEnv:
-                initialCommand = 'unset LBENV_SOURCED && source /cvmfs/lhcb.cern.ch/lib/LbEnv && lb-set-platform %s && make -j%s' % (
+                initialCommand = 'unset LBENV_SOURCED && source /cvmfs/lhcb.cern.ch/lib/LbEnv -c %s && make -j%s' % (
                     self.platform, self.nMakeCores)
             if self.useApptainer or 'slc6' in self.platform:
                 try:
@@ -567,6 +567,7 @@ class GaudiExec(IPrepareApp):
                                  'Perhaps the specified container location is not accessible.')
                     raise GangaException('Failed to execute make command')
             else:
+                print('initial command: ', initialCommand)
                 rc, stdout, stderr = _exec_cmd(initialCommand, self.directory)
             if rc != 0:
                 logger.error("Failed to perform initial make on a Cmake based project")
