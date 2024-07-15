@@ -567,7 +567,6 @@ class GaudiExec(IPrepareApp):
                                  'Perhaps the specified container location is not accessible.')
                     raise GangaException('Failed to execute make command')
             else:
-                print('initial command: ', initialCommand)
                 rc, stdout, stderr = _exec_cmd(initialCommand, self.directory)
             if rc != 0:
                 logger.error("Failed to perform initial make on a Cmake based project")
