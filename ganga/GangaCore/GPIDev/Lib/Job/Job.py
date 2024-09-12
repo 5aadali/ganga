@@ -1432,7 +1432,7 @@ class Job(GangaObject):
 
         if (self.application.is_prepared is not None) and (force is False):
             msg = "The application associated with job %s has already been prepared. "\
-            "To force the operation, call prepare(force=True)" % self.id
+                "To force the operation, call prepare(force=True)" % self.id
             raise JobError(msg)
         if self.application.is_prepared is None:
             add_to_inputsandbox = addProxy(self.application).prepare()
