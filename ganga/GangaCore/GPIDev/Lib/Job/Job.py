@@ -1431,7 +1431,7 @@ class Job(GangaObject):
             return
 
         if (self.application.is_prepared is not None) and (force is False):
-            msg = "The application associated with job %s has already been prepared. "
+            msg = "The application associated with job %s has already been prepared. "\
             "To force the operation, call prepare(force=True)" % self.id
             raise JobError(msg)
         if self.application.is_prepared is None:
