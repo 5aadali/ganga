@@ -710,20 +710,36 @@ class JobRegistry_Monitor(GangaThread):
         """
         Enable/Run the monitoring loop and wait for the monitoring steps completion.
         Parameters:
-          steps:   number of monitoring steps to run
-          timeout: how long to wait for monitor steps termination (seconds)
-          jobs: a registry slice to be monitored (None -> all jobs), it may be passed by the user so ._impl is stripped if needed
+        steps:   number of monitoring steps to run
+        timeout: how long to wait for monitor steps termination (seconds)
+        jobs: an int (job index), list of ints (job indices), job object, or registry slice (None -> all jobs)
         Return:
-          False, if the loop cannot be started or the timeout occured while waiting for monitoring termination
-          True, if the monitoring steps were successfully executed  
-        Note:         
-          This method is meant to be used in Ganga scripts to request monitoring on demand. 
+        False, if the loop cannot be started or the timeout occurred while waiting for monitoring termination
+        True, if the monitoring steps were successfully executed
         """
 
         log.debug("runMonitoring")
 
+        # Ensure jobs can be either an int, list of int, job object, or registry slice
+        if isinstance(jobs, int):
+            jobs = [jobs]  # Convert single int to a list of one element
+        elif isinstance(jobs, list):
+            # Ensure all elements in the list are integers
+            if not all(isinstance(job, int) for job in jobs):
+                log.warning("The list provided contains non-integer elements.")
+                return False
+        elif hasattr(jobs, 'id'):  # Assuming job object has an 'id' attribute
+            jobs = [jobs.id]  # Extract job ID from the job object
+        elif jobs is not None:
+            # Check if it is a registry slice (existing behavior)
+            from GangaCore.GPIDev.Lib.Registry.RegistrySlice import RegistrySlice
+            if not isinstance(jobs, RegistrySlice):
+                log.warning(
+                    'runMonitoring: jobs argument must be a registry slice, an int, list of int, or job object.')
+                return False
+
         if GANGA_SWAN_INTEGRATION:
-            # Detect New Jobs from other sessions.
+            # Detect New Jobs from other sessions (no change here)
             new_jobs = stripProxy(self.registry_slice).objects.repository.update_index(True, True)
             self.newly_discovered_jobs = list(set(self.newly_discovered_jobs) | set(new_jobs))
             # Only load jobs from disk which are in new state currently.
@@ -733,7 +749,7 @@ class JobRegistry_Monitor(GangaThread):
                 if job_status in ['new']:
                     stripProxy(self.registry_slice).objects.repository.load([i])
 
-        if not isType(steps, int) and steps < 0:
+        if not isinstance(steps, int) or steps < 0:
             log.warning("The number of monitor steps should be a positive (non-zero) integer")
             return False
 
@@ -741,24 +757,15 @@ class JobRegistry_Monitor(GangaThread):
             log.error("Cannot run the monitoring loop. It has already been stopped")
             return False
 
-        # we don not allow the user's request the monitoring loop while the
-        # internal services are stopped
         if not Coordinator.servicesEnabled:
-            log.error("Cannot run the monitoring loop."
-                      "The internal services are disabled (check your credentials or available disk space)")
+            log.error("Cannot run the monitoring loop. The internal services are disabled")
             return False
 
-        # if the monitoring is disabled (e.g. scripts)
         if not self.enabled:
-            # and there are some required cred which are missing
-            # (the monitoring loop does not monitor the credentials so we need to check 'by hand' here)
             _missingCreds = get_needed_credentials()
             if _missingCreds:
-                log.error("Cannot run the monitoring loop. The following credentials are required: %s" % _missingCreds)
+                log.error("Cannot run the monitoring loop. Missing credentials: %s" % _missingCreds)
                 return False
-
-        #log.debug("jobs: %s" % str(jobs))
-        #log.debug("self.__mainLoopCond: %s" % str(self.__mainLoopCond))
 
         with self.__mainLoopCond:
             log.debug('Monitoring loop lock acquired. Enabling mon loop')
@@ -768,47 +775,29 @@ class JobRegistry_Monitor(GangaThread):
 
             if jobs is not None:
                 m_jobs = jobs
-
-                # additional check if m_jobs is really a registry slice
-                # the underlying code is not prepared to handle correctly the
-                # situation if it is not
-                from GangaCore.GPIDev.Lib.Registry.RegistrySlice import RegistrySlice
-                if not isType(m_jobs, RegistrySlice):
-                    log.warning(
-                        'runMonitoring: jobs argument must be a registry slice such as a result of jobs.select() or jobs[i1:i2]')
-                    return False
-
-                #self.registry_slice = m_jobs
-                #log.debug("m_jobs: %s" % str(m_jobs))
                 self.makeUpdateJobStatusFunction(jobSlice=m_jobs)
 
             log.debug("Enable Loop, Clear Iterators and setCallbackHook")
-            # enable mon loop
             self.enabled = True
-            # set how many steps to run
             self.steps = steps
-            # enable job list iterators
             self.stopIter.clear()
-            # Start backend update timeout checking.
             self.setCallbackHook(UpdateDict.timeoutCheck, {'thisDict': self.updateDict_ts}, True)
 
             log.debug("Waking up Main Loop")
-            # wake up the mon loop
             self.__mainLoopCond.notify_all()
 
         log.debug("Waiting to execute steps")
-        # wait to execute the steps
         self.__monStepsTerminatedEvent.wait()
         self.__monStepsTerminatedEvent.clear()
 
         log.debug("Test for timeout")
-        # wait the steps to be executed or timeout to occur
         if not self.__awaitTermination(timeout):
             log.warning("Monitoring loop started but did not complete in the given timeout.")
-            # force loops termination
             self.stopIter.set()
             return False
+
         return True
+
 
     def enableMonitoring(self):
         """
